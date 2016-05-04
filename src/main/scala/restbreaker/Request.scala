@@ -1,5 +1,4 @@
-package io.gitbucket.restbreaker
-
+package restbreaker
 
 case class Request(method: HttpMethod,
                    url: String,

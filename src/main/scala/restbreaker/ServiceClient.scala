@@ -1,14 +1,14 @@
-package io.gitbucket.restbreaker
+package restbreaker
 
 import java.nio.charset.StandardCharsets
 import java.util
 
 import org.asynchttpclient._
 
-import scala.concurrent.{ExecutionContext, Promise, Future}
+import scala.collection.JavaConverters._
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
-import scala.collection.JavaConverters._
 
 trait ServiceClient {
   def call[T](request: Request)(implicit ec: ExecutionContext, c: ClassTag[T]): Future[T]

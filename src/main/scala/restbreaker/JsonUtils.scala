@@ -1,9 +1,8 @@
-package io.gitbucket.restbreaker
+package restbreaker
 
 import com.fasterxml.jackson.databind._
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.core.{JsonGenerator, JsonParser, Version}
+
 import scala.reflect.ClassTag
 
 object JsonUtils {

@@ -1,13 +1,13 @@
-package io.gitbucket.restbreaker
+package restbreaker
 
-import java.util.concurrent.{TimeoutException, Executors}
+import java.util.concurrent.TimeUnit._
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
+import java.util.concurrent.{Executors, TimeoutException}
 
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{Promise, Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.reflect.ClassTag
-import java.util.concurrent.TimeUnit._
 
 class CircuitBreaker(client: ServiceClient,
                     enabled: Boolean = true,
