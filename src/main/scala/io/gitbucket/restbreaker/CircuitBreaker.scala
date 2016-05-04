@@ -7,15 +7,13 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.{Future, ExecutionContext}
 import scala.reflect.ClassTag
 
-class CircuitBreaker(client: ServiceClient, config: CircuitBreakerConfig = CircuitBreakerConfig()) extends ServiceClient {
+class CircuitBreaker(client: ServiceClient,
+                    enabled: Boolean = true,
+                    callTimeout: Long = 5000,
+                    maxFailures: Long = 5,
+                    resetTimeout: Long = 30000) extends ServiceClient {
 
   protected val logger = LoggerFactory.getLogger(getClass)
-
-  // Configuration
-  protected val enabled = config.enabled
-  protected val callTimeout = config.callTimeout
-  protected val maxFailures = config.maxFailures
-  protected val resetTimeout = config.resetTimeout
 
   // Status of this CircuitBreaker
   protected val lastFailedTime = new AtomicLong(0)
@@ -59,8 +57,3 @@ class CircuitBreaker(client: ServiceClient, config: CircuitBreakerConfig = Circu
   }
 
 }
-
-case class CircuitBreakerConfig(enabled: Boolean = true,
-                                maxFailures: Int = 5,
-                                callTimeout: Long = 5000,
-                                resetTimeout: Long = 30000)
