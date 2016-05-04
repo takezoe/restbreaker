@@ -5,7 +5,7 @@ case class Request(method: HttpMethod,
                    headers: Map[String, String] = Map.empty,
                    queryParams: Map[String, Seq[String]] = Map.empty,
                    formParams: Map[String, Seq[String]] = Map.empty,
-                   body: Option[Any] = None){
+                   body: Option[AnyRef] = None){
 
   def withHeader(headers: (String, String)*): Request = copy(headers = this.headers ++ headers.toMap)
 
@@ -27,7 +27,7 @@ case class Request(method: HttpMethod,
     })
   }
 
-  def withBody(body: Any): Request = copy(body = Some(body))
+  def withBody(body: AnyRef): Request = copy(body = Some(body))
 
 }
 

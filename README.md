@@ -1,13 +1,13 @@
 REST Breaker
 ====
 
-REST Breaker is an asynchronous HTTP client with the circuit breaker for Scala.
+REST Breaker is an asynchronous REST client with the circuit breaker for Scala.
 
 Basic usage
 ----
 
-Basically, REST Breaker provides simple and intuitive API to call REST API.
-Especially, it makes possible to handle JSON easily by encoding / decoding Scala object and JSON automatically.
+Basically, REST Breaker provides simple and intuitive API to call JSON based REST API.
+It makes possible to handle JSON easily by encoding / decoding Scala object and JSON automatically.
 
 ```scala
 import restbreaker._
@@ -29,15 +29,6 @@ f.foreach { result: Result =>
     println("failure")
   }
 }
-```
-
-Of course, you can also set request headers, query parameters and form parameters.
-
-```scala
-val request = Request.post("http://localhost:9000/api/blog")
-  .withHeader("Content-Type" -> "text/plain; charset=UTF-8")
-  .withQueryParam("id" -> "123", "lang" -> "English")
-  .withBody("Hello, World!")
 ```
 
 Circuit Breaker

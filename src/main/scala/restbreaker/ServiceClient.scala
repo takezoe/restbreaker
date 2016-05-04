@@ -31,22 +31,7 @@ class AHCServiceClient(config: ServiceClientConfig = ServiceClientConfig()) exte
     req.execute(new AsyncResultHandler(promise))
 
     promise.future.map { body =>
-      val clazz = c.runtimeClass
-      if(clazz == classOf[String]){
-        body.asInstanceOf[T]
-      } else if(clazz == classOf[Int]){
-        body.toInt.asInstanceOf[T]
-      } else if(clazz == classOf[Long]){
-        body.toLong.asInstanceOf[T]
-      } else if(clazz == classOf[Double]){
-        body.toDouble.asInstanceOf[T]
-      } else if(clazz == classOf[Float]){
-        body.toFloat.asInstanceOf[T]
-      } else if(clazz == classOf[Boolean]){
-        body.toBoolean.asInstanceOf[T]
-      } else {
-        JsonUtils.deserialize[T](body)
-      }
+      JsonUtils.deserialize[T](body)
     }
   }
 
@@ -63,15 +48,7 @@ class AHCServiceClient(config: ServiceClientConfig = ServiceClientConfig()) exte
     }
     request.body match {
       case Some(body) => {
-        body match {
-          case x: String  => requestBuilder.setBody(x)
-          case x: Int     => requestBuilder.setBody(x.toString)
-          case x: Long    => requestBuilder.setBody(x.toString)
-          case x: Double  => requestBuilder.setBody(x.toString)
-          case x: Float   => requestBuilder.setBody(x.toString)
-          case x: Boolean => requestBuilder.setBody(x.toString)
-          case x: AnyRef  => requestBuilder.setBody(JsonUtils.serialize(x)).setHeader("Content-Type", "application/json")
-        }
+        requestBuilder.setBody(JsonUtils.serialize(body)).setHeader("Content-Type", "application/json")
       }
       case None => {
         if(request.formParams.nonEmpty){
