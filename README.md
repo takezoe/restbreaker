@@ -1,4 +1,4 @@
-restbreaker
+REST Breaker
 ====
 
 REST Breaker is an asynchronous HTTP client for REST API for Scala with the circuit breaker.
