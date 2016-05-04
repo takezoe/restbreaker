@@ -54,9 +54,9 @@ class AHCServiceClient(config: ServiceClientConfig = ServiceClientConfig()) exte
     request.headers.foreach { case (key, value) =>
       requestBuilder.addHeader(key, value)
     }
-    if(request.parameters.nonEmpty){
+    if(request.queryParams.nonEmpty){
       val queryParams = new util.HashMap[String, util.List[String]]()
-      request.parameters.foreach { case (key, values) =>
+      request.queryParams.foreach { case (key, values) =>
         queryParams.put(key, values.asJava)
       }
       requestBuilder.setQueryParams(queryParams)
@@ -74,7 +74,13 @@ class AHCServiceClient(config: ServiceClientConfig = ServiceClientConfig()) exte
         }
       }
       case None => {
-
+        if(request.formParams.nonEmpty){
+          val formParams = new util.HashMap[String, util.List[String]]()
+          request.formParams.foreach { case (key, values) =>
+            formParams.put(key, values.asJava)
+          }
+          requestBuilder.setFormParams(formParams)
+        }
       }
     }
 

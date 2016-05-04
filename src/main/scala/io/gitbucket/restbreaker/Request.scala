@@ -4,13 +4,23 @@ package io.gitbucket.restbreaker
 case class Request(method: HttpMethod,
                    url: String,
                    headers: Map[String, String] = Map.empty,
-                   parameters: Map[String, Seq[String]] = Map.empty,
+                   queryParams: Map[String, Seq[String]] = Map.empty,
+                   formParams: Map[String, Seq[String]] = Map.empty,
                    body: Option[Any] = None){
 
   def withHeader(headers: (String, String)*): Request = copy(headers = this.headers ++ headers.toMap)
 
-  def withParameter(parameters: (String, Any)*) = {
-    copy(parameters = this.parameters ++ parameters.map { case (key, value) =>
+  def withQueryParam(queryParams: (String, Any)*) = {
+    copy(queryParams = this.queryParams ++ queryParams.map { case (key, value) =>
+      key -> (value match {
+        case x: Seq[_] => x.map(_.toString)
+        case _         => Seq(value.toString)
+      })
+    })
+  }
+
+  def withFormParam(formParams: (String, Any)*) = {
+    copy(formParams = this.formParams ++ formParams.map { case (key, value) =>
       key -> (value match {
         case x: Seq[_] => x.map(_.toString)
         case _         => Seq(value.toString)
