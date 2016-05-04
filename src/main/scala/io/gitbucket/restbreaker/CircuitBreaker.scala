@@ -1,11 +1,13 @@
 package io.gitbucket.restbreaker
 
+import java.util.concurrent.{TimeoutException, Executors}
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{Promise, Future, ExecutionContext}
 import scala.reflect.ClassTag
+import java.util.concurrent.TimeUnit._
 
 class CircuitBreaker(client: ServiceClient,
                     enabled: Boolean = true,
@@ -26,8 +28,7 @@ class CircuitBreaker(client: ServiceClient,
     } else {
       closed.get() match {
         case true => {
-          // TODO Timeout
-          val f = client.call(request)
+          val f = withTimeout(client.call(request))
           f.onFailure { case t =>
             val count = failureCount.incrementAndGet()
             if(count == maxFailures){
@@ -42,7 +43,7 @@ class CircuitBreaker(client: ServiceClient,
             logger.info("CircuitBreaker is opening, so returns the failure immediately.")
             Future.failed(new RuntimeException("CircuitBreaker is opening."))
           } else {
-            val f = client.call(request)
+            val f = withTimeout(client.call(request))
             f.onSuccess { case response =>
               logger.info("CircuitBreaker is closed because the service is returned.")
               closed.set(true)
@@ -54,6 +55,19 @@ class CircuitBreaker(client: ServiceClient,
         }
       }
     }
+  }
+
+  protected def withTimeout[T](f: Future[T]): Future[T] = {
+    val scheduler = Executors.newScheduledThreadPool(1)
+    val p = Promise[T]()
+    p tryCompleteWith f
+    val action = new Runnable {
+      override def run(): Unit = {
+        p tryFailure new TimeoutException("CircuitBreaker timed out ")
+      }
+    }
+    scheduler.schedule(action, callTimeout, MILLISECONDS)
+    p.future
   }
 
 }
