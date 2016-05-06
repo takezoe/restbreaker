@@ -35,10 +35,14 @@ Circuit Breaker
 ----
 
 REST Breaker also provides the circuit breaker for the REST API calls.
-To enable the circuit breaker, wrap `ServiceClient` by `CircuitBreaker` simply.
+To enable the circuit breaker, wrap `ServiceClient` in `CircuitBreaker` simply.
 
 ```scala
-val client = new CircuitBreaker(new AHCServiceClient(), callTimeout = 1000, maxFailures = 5, resetTimeout = 30000)
+val client = new CircuitBreaker(new AHCServiceClient(), 
+  callTimeout = 1000, 
+  maxFailures = 5, 
+  resetTimeout = 30000
+)
 ```
 
 If API call is failed `maxFailures` times, `CircuitBreaker` is opened and returns the failure immediately for subsequent calls.
