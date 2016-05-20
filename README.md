@@ -3,6 +3,12 @@ REST Breaker
 
 REST Breaker is an asynchronous REST client with the circuit breaker for Scala.
 
+```scala
+resolvers += "amateras-repo" at "http://amateras.sourceforge.jp/mvn-snapshot/"
+
+libraryDependencies += "com.github.takezoe" %% "restbreaker" % "0.0.1-SNAPSHOT"
+```
+
 Basic usage
 ----
 
