@@ -24,13 +24,14 @@ class CircuitBreaker(client: ServiceClient,
 
   def call[T](request: Request)(implicit ec: ExecutionContext, c: ClassTag[T]): Future[T] = {
     if(!enabled){
-      call(request)
+      client.call(request)
     } else {
       closed.get() match {
         case true => {
           val f = withTimeout(client.call(request))
           f.onFailure { case t =>
             val count = failureCount.incrementAndGet()
+            lastFailedTime.set(System.currentTimeMillis)
             if(count == maxFailures){
               closed.set(false)
               logger.info("CircuitBreaker is opened.")
@@ -39,7 +40,7 @@ class CircuitBreaker(client: ServiceClient,
           f
         }
         case false => {
-          if(lastFailedTime.get() + resetTimeout < System.currentTimeMillis){
+          if(lastFailedTime.get() + resetTimeout > System.currentTimeMillis){
             logger.info("CircuitBreaker is opening, so returns the failure immediately.")
             Future.failed(new RuntimeException("CircuitBreaker is opening."))
           } else {
@@ -63,7 +64,7 @@ class CircuitBreaker(client: ServiceClient,
     p tryCompleteWith f
     val action = new Runnable {
       override def run(): Unit = {
-        p tryFailure new TimeoutException("CircuitBreaker timed out ")
+        p tryFailure new TimeoutException("CircuitBreaker timed out.")
       }
     }
     scheduler.schedule(action, callTimeout, MILLISECONDS)

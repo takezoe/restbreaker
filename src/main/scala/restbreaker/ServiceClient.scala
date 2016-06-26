@@ -36,6 +36,7 @@ class AHCServiceClient(config: ServiceClientConfig = ServiceClientConfig()) exte
   }
 
   protected def buildRequest(request: Request, requestBuilder: BoundRequestBuilder): BoundRequestBuilder = {
+    requestBuilder.setRequestTimeout(config.timeout)
     request.headers.foreach { case (key, value) =>
       requestBuilder.addHeader(key, value)
     }
